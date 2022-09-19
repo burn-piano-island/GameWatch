@@ -1,0 +1,172 @@
+{
+	"errors": [],
+	"data": [
+		{
+			"configuration_type": "screen",
+			"id": "c0fa8517-385e-46f1-bfc9-d3ac7f35bbd0",
+			"id_v1": "/groups/6",
+			"metadata": {
+				"name": "Living Room"
+			},
+			"locations": {
+				"service_locations": [
+					{
+						"service": {
+							"rtype": "entertainment",
+							"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+						},
+						"positions": [
+							{
+								"x": 0,
+								"y": 0.8,
+								"z": 0
+							}
+						],
+						"position": {
+							"x": 0,
+							"y": 0.8,
+							"z": 0
+						}
+					}
+				]
+			},
+			"type": "entertainment_configuration",
+			"channels": [
+				{
+					"channel_id": 0,
+					"position": {
+						"x": -0.4,
+						"y": 0.8,
+						"z": -0.4
+					},
+					"members": [
+						{
+							"index": 0,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 1,
+					"position": {
+						"x": -0.4,
+						"y": 0.8,
+						"z": 0
+					},
+					"members": [
+						{
+							"index": 1,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 2,
+					"position": {
+						"x": -0.4,
+						"y": 0.8,
+						"z": 0.4
+					},
+					"members": [
+						{
+							"index": 2,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 3,
+					"position": {
+						"x": 0,
+						"y": 0.8,
+						"z": 0.4
+					},
+					"members": [
+						{
+							"index": 3,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 4,
+					"position": {
+						"x": 0.4,
+						"y": 0.8,
+						"z": 0.4
+					},
+					"members": [
+						{
+							"index": 4,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 5,
+					"position": {
+						"x": 0.4,
+						"y": 0.8,
+						"z": 0
+					},
+					"members": [
+						{
+							"index": 5,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				},
+				{
+					"channel_id": 6,
+					"position": {
+						"x": 0.4,
+						"y": 0.8,
+						"z": -0.4
+					},
+					"members": [
+						{
+							"index": 6,
+							"service": {
+								"rtype": "entertainment",
+								"rid": "cec86c34-55c3-40c0-bc62-5e7262fb214f"
+							}
+						}
+					]
+				}
+			],
+			"light_services": [
+				{
+					"rtype": "light",
+					"rid": "25f13040-827d-40fb-add6-f555fb03a96a"
+				}
+			],
+			"stream_proxy": {
+				"mode": "auto",
+				"node": {
+					"rtype": "entertainment",
+					"rid": "32484a99-fdaa-4b65-965f-54715e5db702"
+				}
+			},
+			"status": "inactive",
+			"name": "Living Room"
+		}
+	]
+}
