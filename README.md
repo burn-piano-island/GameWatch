@@ -17,3 +17,11 @@ Once you've successfully connected / authenticated to a bridge, the application 
 - `hueapplicationkey`- client application key used for authenticated calls against the hub (generated during auth).
 
 If you want to reset your hue bridge settings, just remove these values from `.env` and run the application again.
+
+## Running the app
+Note - please read the `.env` setup instructions above.
+
+Simply install dependencies:
+`npm install`
+And then compile / run:
+`npm start`
