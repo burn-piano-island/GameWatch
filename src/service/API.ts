@@ -1,10 +1,11 @@
 import fetch from "node-fetch";
-import { Paths } from "../constants";
+import { NHL_COLORS_ENDPOINT, Paths } from "../constants";
 import { Bridge, BridgeConfig, DiscoveredBridge, EndpointAreaListResponse, EntertainmentArea } from "../models/Hue";
 import { Dict } from "../models/Models";
 import { GameFeedResponse } from "../models/NHLGameFeed";
 import { Game, ScheduleResponse } from "../models/NHLSchedule";
 import { Team, TeamsResponse } from "../models/NHLTeams";
+import { TeamColorResponse } from "../models/TeamColors";
 
 export async function get<T>(url: string, headers?: {[id: string]: string}): Promise<T> {
     const response = await fetch(url, { headers });
@@ -53,6 +54,10 @@ export module API {
                 return Buffer.from(response);
             }
 
+            export const GetTeamColors: (teamName: string) => Promise<TeamColorResponse> = async(teamName: string) => {
+                return await get<TeamColorResponse>(`${NHL_COLORS_ENDPOINT}/${teamName}`);
+            }
+
             export const GetTeam: (
                 id: string
             ) => Promise<Team | undefined> = async (id) => {
@@ -91,10 +96,10 @@ export module API {
             }
         }
         export module Bridge {
-            export const ListEntertainmentAreas = async(ip: string, headers: Dict<string>) => {
+            export const ListEntertainmentAreas = async(ip: string, headers: {[id: string]: string}) => {
                 return (await get<EndpointAreaListResponse>(Paths.Hue.HUE_ENTERTAINMENT_LIST_ENDPOINT(ip), headers)).data;
             }
-            export const GetEntertainmentArea = async(ip: string, id: string, headers: Dict<string>) => {
+            export const GetEntertainmentArea = async(ip: string, id: string, headers: {[id: string]: string}) => {
                 return await get<EntertainmentArea>(Paths.Hue.HUE_ENTERTAINMENT_AREA_ENDPOINT(ip, id), headers);
             }
         }

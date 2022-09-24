@@ -4,6 +4,7 @@ import Chalk from "chalk";
 import { appendFile } from "fs";
 import { MultiProgressBars } from "multi-progress-bars";
 import {
+    DEFAULT_GOAL_LIGHT,
     ENV_HUE_BRIDGE_IP,
     ENV_HUE_CLIENT_KEY,
     ENV_HUE_KEY,
@@ -14,10 +15,11 @@ import {
     Paths,
 } from "./constants";
 import { Bridge, EntertainmentArea as EntertainmentArea } from "./models/Hue";
-import { Creds, Dict, Scene } from "./models/Models";
+import { CreateSocketResponse, Creds, Dict, Scene } from "./models/Models";
 import { API } from "./service/API";
 import { sleep } from "./utils";
 import { dtls } from "node-dtls-client";
+import Color from "color";
 
 /**
  * Class for interacting with Hue Entertainment API and bridges
@@ -28,11 +30,14 @@ export class HueEntertainmentClient {
     private BRIDGE_NAME = "Hue Bridge";
     private HUE_CLIENTKEY = process.env[ENV_HUE_CLIENT_KEY] ?? "";
     private HUE_USERNAME = process.env[ENV_HUE_KEY] ?? '';
-    private HUE_HEADERS: Dict<string> = {};
+    private HUE_HEADERS: {[id: string]: string} = {};
     private ENTERTAINMENT_AREA?: EntertainmentArea;
     private HUE_ENTERTAINMENT_AREA_ENDPOINT?: string;
     private BUFFER_HEADER?: Buffer;
     private SOCKET?: dtls.Socket;
+    private STREAMING: boolean = false;
+    private SCENE?:Scene;
+    private INTERVAL?: NodeJS.Timer;
 
     /**
      * Constructs a new instance of the Hue Client.
@@ -249,8 +254,8 @@ export class HueEntertainmentClient {
         }
         else {
             console.error(response.statusText);
+            return {error: response.statusText};
         }
-        return undefined;
     }
 
     /**
@@ -285,7 +290,7 @@ export class HueEntertainmentClient {
      * Creates a DTLS socket connection with the Hue Bridge
      * @returns the DTLS socket to stream events to the configured entertainment area
      */
-    createSocket = async() => {
+    createSocket: () => Promise<CreateSocketResponse> = async() => {
         let options: dtls.Options = {
             type: "udp4",
             address: this.HUE_BRIDGE_IP,
@@ -300,10 +305,12 @@ export class HueEntertainmentClient {
             .on("connected", (e) => {
                 console.log("Connected!", e);
                 this.SOCKET = socket;
+                this.start();
                 // socket.send(test_buffer);
             })
-            .on("error", (e) => {
-                console.log("ERROR", e);
+            .on("error", (error) => {
+                console.log("ERROR", error);
+                return {error}
                 // TODO - handle retry if DTLS handshake timed out
             })
             .on("message", (msg) => {
@@ -316,7 +323,7 @@ export class HueEntertainmentClient {
                 // if (!response.ok) console.error(response.statusText);
                 // else console.log(response.body);
             });
-            return socket;
+            return {socket};
     }
 
     /**
@@ -330,4 +337,77 @@ export class HueEntertainmentClient {
         }
         return new Scene(this.BUFFER_HEADER);
     }
+
+    setScene = (scene: Scene, interval?: number) => {
+        this.SCENE = scene;
+    }
+
+    getScene = () => this.SCENE;
+
+    start = () => {
+        this.STREAMING = true;
+        this.INTERVAL = setInterval(() => {
+            if(!this.STREAMING) {
+                clearInterval(this.INTERVAL);
+            }
+            if(this.SCENE) {
+                this.SOCKET?.send(this.SCENE.render());
+
+            }
+            else {
+                this?.setScene(this.createScene());
+            }
+
+
+        }, 18) // 55.555555 fps
+    }
+
+    stop = () => {
+        this.STREAMING = false;
+        clearInterval(this.INTERVAL);
+        this.endEndpointStream();
+    }
+
+    showGoal = async (color?: string, duration?: number) => {
+        const darken_amount=.08;
+        const lighten_amount=.32;
+        const targetFramerate = 50;
+        const sleep_interval = 1000 / targetFramerate
+        const loop = (duration ?? 5000) / sleep_interval;
+
+        const current_scene = this?.SCENE;
+        const goalColor = Color(color ?? DEFAULT_GOAL_LIGHT.hex);
+        let goal_scene = this.createScene();
+        for(i = 0; i < (this?.ENTERTAINMENT_AREA?.channels?.length ?? 0); i++){
+            goal_scene.setChannelColor(`${i}`,color);
+        }
+        // track whether we're increasing or decreasing channel brightness
+        let darkening = true;
+        for (var i = 0; i < loop; i++) {
+            this.setScene(goal_scene);
+            await sleep(sleep_interval);
+            //for each light in scene
+            for(const channelId in goal_scene.channels) {
+                let color = goal_scene.channels[channelId];
+                let lightness = goalColor.lightness();
+                // if light is not off (lightness 0), darken it
+                if((lightness < 5 && darkening) || (lightness > 48 && !darkening)){
+                    darkening = !darkening;
+                }
+
+                if(darkening) {
+                    //darkenby
+                    //https://github.com/Qix-/color/issues/53#issuecomment-487822576
+                    goal_scene.setChannelColor(channelId, goalColor.lightness(lightness - lightness * darken_amount))
+                }
+                else {
+                    //brightenBy
+                    goal_scene.setChannelColor(channelId, goalColor.lightness(lightness + (100 - lightness) * lighten_amount))
+                }
+
+            }
+        }
+        this.setScene(current_scene ?? this.createScene())
+    }
+
 }
