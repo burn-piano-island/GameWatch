@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@types/chalk-pipe": "^2.0.0",
+    "@types/color": "^3.0.3",
     "@types/inquirer": "^8.2.3",
     "@types/node": "^18.7.18",
     "@types/node-cron": "^3.0.4",
