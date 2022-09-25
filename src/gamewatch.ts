@@ -5,14 +5,14 @@
  * TODOS
  * 
  * easy notes
- * add game start time to game picker
  * 
  * stupid notes
  * maybe think about using d3.js for light pattern math? sin wave / pulse / etc for pregame?
  * 
- * 1. Game details header / scoreboard UI
+ * 1. Game details header / scoreboard UI (may need a framework)
  *    a. Score
  *    b. team logos and abbreviations
+ * 2. Handle situations where bridge sync is already in progress or fails to initialize
  * 3. In-game tasks
  *    a. progress bars for game clock - DONE
  *    b. goal announcements - TESTING
@@ -20,6 +20,11 @@
  *    d. pregame spinner
  *    e. progress bars for penalties
  *    f. progress bar for pregame countdown
+ * 4. Environment variable config
+ *    a. timing / intensity of events (goals, etc)
+ *    b. game log verbosity level
+ *    c. settings for which events to log
+ *    d. GAME_CHECK_INTERVAL_CRON (how fast to refresh game data)
  */
 
 import inquirer from 'inquirer';
@@ -43,7 +48,9 @@ const pickGame = async (): Promise<Game> => {
             message: "Which game to watch?",
             choices: games.map((game) => {
                 return {
-                    name: `${game.teams.away.team.name} @ ${game.teams.home.team.name}`,
+                    name: `${game.teams.away.team.name} @ ${game.teams.home.team.name} [${new Date(game.gameDate).toLocaleTimeString('default', {
+                        hour: '2-digit', minute: '2-digit'
+                    })}]`,
                     value: game
                 };
             }),

@@ -303,7 +303,7 @@ export class HueEntertainmentClient {
         let socket: dtls.Socket = dtls
             .createSocket(options)
             .on("connected", (e) => {
-                console.log("Connected!", e);
+                console.log("Connected to socket!");
                 this.SOCKET = socket;
                 this.start();
                 // socket.send(test_buffer);
@@ -319,9 +319,6 @@ export class HueEntertainmentClient {
             .on("close", async (e) => {
                 console.log("CLOSE", e);
                 this.endEndpointStream()
-                // const response = await fetch(this.HUE_ENTERTAINMENT_AREA_ENDPOINT!, streamStopOptions)
-                // if (!response.ok) console.error(response.statusText);
-                // else console.log(response.body);
             });
             return {socket};
     }
