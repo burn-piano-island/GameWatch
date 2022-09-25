@@ -1,15 +1,16 @@
 import Sharp from "sharp";
 import asciify from "asciify-image";
+import inquirer from "inquirer";
 import { contains } from "underscore";
-import { NHLConstants } from "./constants";
+import { HueConstants, NHLConstants } from "./constants";
 import { API } from "./service/API";
 
 // TODO - document functions and add tests
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const addChannel = (buffer: Buffer, channelId: string, color: string) => {
-    const colorArray = convertHexRGBTo16BitArray(color);
+export const addChannel = (buffer: Buffer, channelId: string, color?: string) => {
+    const colorArray = color ? convertHexRGBTo16BitArray(color) : HueConstants.Lights.OFF;
     return Buffer.concat([buffer, Buffer.from([parseInt(channelId), ...colorArray])]);
 };
 
@@ -86,4 +87,12 @@ export const printTeamLogos = async (teamIds: string[]) => {
         width: 60
     });
     console.log(ascii)
+}
+
+export const askConfirmation = async(message: string): Promise<boolean> => {
+    return (await inquirer.prompt([{
+        type: 'confirm',
+        message,
+        name: 'confirm'
+    }])).confirm;
 }

@@ -24,7 +24,7 @@ export const GAME_CLOCK_PROGRESS_BAR = 'Game clock'
 
 export const HUE_ACTION_STREAM_START = { action: "start" };
 export const HUE_ACTION_STREAM_STOP = { action: "stop" };
-export const EVERY_TEN_SECONDS = `*/10 * * * * *`;
+export const GAME_CHECK_INTERVAL_CRON = `*/5 * * * * *`;
 
 export module Paths {
     export module NHL {
